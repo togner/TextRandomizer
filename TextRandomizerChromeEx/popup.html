@@ -33,7 +33,24 @@
 	<script type="text/javascript" src="popup.js"></script>
   </head>
   <body>
-    <div id="randomize">Randomize</div>
+	<div id="randButton">Randomize</div>
+	<table border="0">
+		<tr>
+			<td>Language set:</td>
+			<td><select id="langSelect"></select></td>
+		</tr>
+		<tr>
+			<td>Consonant swaps:</td>
+			<td><input id="consonantSwapsInput" type="number" min="0" max="50" value="0" step="1" /></td>
+		</tr>
+		<tr>
+			<td>Vowel swaps:</td>
+			<td><input id="vowelSwapsInput" type="number" min="0" max="50" value="0" step="1" /></td>
+		</tr>
+		<tr>
+			<td colspan="2"><input id="multiLevelSwapsCheck" type="checkbox">Multi-level swaps</input></td>
+		</tr>
+	</table>
   </body>
 </html>
 
