@@ -1,0 +1,16 @@
+{
+  "manifest_version": 2,
+
+  "name": "Text Randomizer",
+  "description": "This extension randomizes text in the web page.",
+  "version": "1.0",
+
+  "permissions": [
+    "tabs", "http://*/*", "https://*/*"
+  ],
+  
+  "browser_action": {
+    "default_icon": "knot32.png",
+    "default_popup": "popup.html"
+  }
+}
