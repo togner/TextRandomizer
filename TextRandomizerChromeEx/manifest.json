@@ -11,6 +11,10 @@
   
   "content_security_policy": "script-src 'self' https://*.googleapis.com; object-src 'self'",
   
+  "icons": { "16": "knot16.png",
+            "48": "knot32.png",
+            "128": "knot32.png" },
+  
   "browser_action": {
     "default_icon": "knot32.png",
     "default_popup": "popup.html"
