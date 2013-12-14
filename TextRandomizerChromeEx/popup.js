@@ -59,22 +59,8 @@ function buildSwapMap(fromChars, toChars, maxSwaps, multiLevelSwaps) {
 
 // main randomize method
 function randomize(e) {
-// chrome.tabs.executeScript(null, 
-// +	{
-// +		code:'document.body.innerHTML = document.body.innerHTML.replace(new RegExp("the", "g"), "dos");'
-// +		
-// +		//code:'document.body.style.backgroundColor="red"'
-// +	});
-
-
-	var text = $("body").text();
-
-// .replace(/text/g,'replace');
-// $("body").html(replaced);
-
-	// var text = "Based on this question I don't want to litter my read stuff waiting for a click event AND a change event AND a mouseover event I want to have all that stuff in a single function or event. Is is possible to chain the events together. I want to capture not only a keyup, but also a click or a change in case the user isn't on the keyboard."
-
 	var language = languages.values[languages.keys.indexOf(localStorage.languageKey)];
+	var text = $("body").text();
 
 	// extract consonants and vowels from text, transform to lower case
 	var textConsonants = "";
@@ -92,36 +78,17 @@ function randomize(e) {
 		}
 	}
 
-	// swap maps
+	// build swap maps
 	var maxConsonantSwaps = Math.min(parseInt(localStorage.consonantSwaps), Math.floor(language.consonants.length / 2), textConsonants.length);
 	var maxVowelSwaps = Math.min(parseInt(localStorage.vowelSwaps), Math.floor(language.vowels.length / 2), textVowels.length);
 
 	var consonantSwapMap = buildSwapMap(textConsonants, language.consonants, maxConsonantSwaps, localStorage.multiLevelSwaps);
 	var vowelSwapMap = buildSwapMap(textVowels, language.vowels, maxVowelSwaps, localStorage.multiLevelSwaps);
 
-
-	// transform
-	var result = "";
-	for (var i = 0; i < textLen; i++) {
-		var c = text[i].toLowerCase();
-		
-		var isUpper = (c != text[i]);
-		var vowelIndex = vowelSwapMap.from.indexOf(c);
-		var consonantIndex = consonantSwapMap.from.indexOf(c);
-		
-		if (vowelIndex != -1) {
-			c = vowelSwapMap.to[vowelIndex];
-		} else if (consonantIndex != -1) {
-			c = consonantSwapMap.to[consonantIndex];
-		}
-		
-		if (isUpper == "true") {
-			c = c.toUpperCase();
-		}
-		
-		result += c;
-	}
-
+	// send swap maps to randomizer content script
+	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+	  chrome.tabs.sendMessage(tabs[0].id, {consonantSwapMap: consonantSwapMap, vowelSwapMap: vowelSwapMap});
+	});
 	window.close();
 }
 
@@ -188,3 +155,4 @@ $(document).ready(function() {
 	initSettings();
 	initSettingsUI();
 });
+
