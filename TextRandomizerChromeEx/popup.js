@@ -1,4 +1,4 @@
-/*************** objects and globals ***************/
+﻿/*************** objects and globals ***************/
 
 function LanguageSet(consonants, vowels) {
 	this.consonants = consonants;
@@ -89,7 +89,6 @@ function randomize(e) {
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 	  chrome.tabs.sendMessage(tabs[0].id, {consonantSwapMap: consonantSwapMap, vowelSwapMap: vowelSwapMap});
 	});
-	window.close();
 }
 
 function resetSettings(e) {
