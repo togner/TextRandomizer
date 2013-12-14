@@ -20,7 +20,7 @@ function onRequest(request, sender, sendResponse) {
 						} else if (consonantIndex != -1) {
 							c = request.consonantSwapMap.to[consonantIndex];
 						}
-						if (isUpper == "true") {
+						if (isUpper) {
 							c = c.toUpperCase();
 						}
 						result += c;
