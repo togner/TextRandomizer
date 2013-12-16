@@ -92,6 +92,71 @@ function randomize(e) {
 	});
 }
 
+function buildWordHistogram() {
+	var ignore = { "STYLE":0, "SCRIPT":0, "NOSCRIPT":0, "IFRAME":0, "OBJECT":0 };
+	
+	var wordCount = 0;
+	var histogram = {};
+	
+	$("*").each(function() { 
+		var jthis = $(this);
+        if (jthis.children().length == 0) {
+		
+			// ignore markup
+			if ((jthis.prop("tagName") in ignore)) {
+				return;
+			}
+			
+			var text = jthis.text();
+			var textWords = text.match(/\S+/g);
+			
+			if (!textWords) {
+				return;
+			}
+			
+			var textWordsLen = textWords.length;
+			
+			// valid word
+			if (textWordsLen > 0) {
+				wordCount += textWordsLen;
+				
+				// normalize
+				for (var i = 0; i < textWordsLen; i++) {
+					var word = textWords[i].toLowerCase();
+					
+					if (histogram.hasOwnProperty(word)) {
+						histogram[word]++;
+					} else {
+						histogram[word] = 0;
+					}
+				}
+			}
+		}
+	});
+	
+	// get keys (words) and sort them by value (count) desc
+	var keys = [];
+	for(var prop in histogram) {
+		keys[keys.length] = prop;
+	}
+	keys.sort(function(a, b) {
+		return histogram[b] - histogram[a];
+	});
+	
+	// populate histogram GUI
+	var keysLen = keys.length;
+	for (var i = 0; i < keysLen; i++) {
+		var percent = Math.round(100 * histogram[keys[i]] / wordCount);
+		$("#histogram")
+			.append('<tr>'
+			+ '<td class="key">' + keys[i] + '</td>'
+			+ '<td><input></input></td>'
+			+ '</tr><tr>'
+			+ '<td colspan="2"><img src="bar.png" width="' + percent + '" height="5" /><span>' + percent + '%</span></td>'
+			+ '</tr>');
+	}
+}
+
 function resetSettings(e) {
 	localStorage.clear();
 	initSettings();
@@ -171,5 +236,7 @@ $(document).ready(function() {
 	
 	initSettings();
 	initSettingsUI();
+	
+	buildWordHistogram();
 });
 
