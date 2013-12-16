@@ -3,21 +3,28 @@
 <head>
     <title>Randomizer</title>
     <style>
-    body {
-      overflow: hidden;
-      margin: 0px;
-      padding: 0px;
-      background: white;
-	  font-size: 0.8em;
-	  font-family: sans-serif;
-	  width: 200px;
-    }
+	body {
+		overflow: hidden;
+		margin: 0px;
+		padding: 0px;
+		background: white;
+		font-size: 0.8em;
+		font-family: sans-serif;
+		width: 200px;
+	}
 	
-	div#settingsContainer {
+	.tab {
 		background: #e0e0e0;
-		margin: 10px 0px 2px 0px;
+		margin: 0px 0px 2px 0px;
 		border-top: 1px solid #999;
 		padding: 5px;
+		max-height: 400px;
+		overflow: auto;
+		display: none;
+	}
+	
+	.tab.active  {
+		display: block;
 	}
 	
 	div#header {
@@ -29,21 +36,43 @@
 	
 	div.button {
 		display: inline-block;
-	  cursor: pointer;
-      text-align: center;
-      background: #ddd;
-	  padding: 2px 5px;
-	  border: 1px solid #ccc;
-	  border-radius: 3px;
-
-	  margin: 10px 0px 0px 10px;
+		cursor: pointer;
+		text-align: center;
+		background: #ddd;
+		padding: 2px 5px;
+		border: 1px solid #ccc;
+		border-radius: 3px;
+		margin: 10px 0px 0px 10px;
 	}
 	
-    div.button:hover {
-      background: #bbb;
-	  border: 1px solid #999;
-    }
-
+	div.button:hover {
+		background: #bbb;
+		border: 1px solid #999;
+	}
+	
+	.tabButton {
+		display: inline-block;
+		cursor: pointer;
+		text-align: center;
+		background: white;
+		padding: 2px 5px;
+		border: 0px;
+		margin: 10px 0px 0px 0px;
+	}
+	
+	.tabButton.active {
+		background: #e0e0e0;
+		border: 1px solid #999;
+		border-bottom: 1px solid #e0e0e0;
+		margin: 10px 0px -1px 0px;
+	}
+	
+	.histogram img {
+		margin: 1px 5px 1px 0;
+	}
+	.histogram span {
+		font-size: 0.7em;
+	}
     </style>
     <script type="text/javascript" src="jquery-1.10.2.min.js"></script>
 	<script type="text/javascript" src="popup.js"></script>
@@ -52,24 +81,48 @@
 	<div id="header">Randomizer</div>
 	<div id="randButton" class="button">Randomize</div>
 	<div id="defaultButton" class="button">Default Settings</div>
-	<div id="settingsContainer">
-		<table border="0">
-			<tr>
-				<td>Language set:</td>
-				<td><select id="langSelect"></select></td>
-			</tr>
-			<tr>
-				<td>Consonant swaps:</td>
-				<td><input id="consonantSwapsInput" type="number" min="0" max="50" value="0" step="1" /></td>
-			</tr>
-			<tr>
-				<td>Vowel swaps:</td>
-				<td><input id="vowelSwapsInput" type="number" min="0" max="50" value="0" step="1" /></td>
-			</tr>
-			<tr>
-				<td colspan="2"><input id="multiLevelSwapsCheck" type="checkbox">Multi-level swaps</input></td>
-			</tr>
-		</table>
+	<div>
+		<div id="lettersTabButton" class="tabButton">Letters</div>
+		<div id="wordsTabButton" class="tabButton">Words</div>
+	</div>
+	<div>
+		<div id="lettersTab" class="tab">
+			<table border="0">
+				<tr>
+					<td>Language set:</td>
+					<td><select id="langSelect"></select></td>
+				</tr>
+				<tr>
+					<td>Consonant swaps:</td>
+					<td><input id="consonantSwapsInput" type="number" min="0" max="50" value="0" step="1" /></td>
+				</tr>
+				<tr>
+					<td>Vowel swaps:</td>
+					<td><input id="vowelSwapsInput" type="number" min="0" max="50" value="0" step="1" /></td>
+				</tr>
+				<tr>
+					<td colspan="2"><input id="multiLevelSwapsCheck" type="checkbox">Multi-level swaps</input></td>
+				</tr>
+			</table>
+		</div>
+		<div id="wordsTab" class="tab">
+			<table border="0" class="histogram">
+				<tr>
+					<td class="key">jedlo</td>
+					<td><input id="jedloInput"></select></td>
+				</tr>
+				<tr>
+					<td colspan="2"><img src="bar.png" width="30" height="5" /><span>30%</span></td>
+				</tr>
+				<tr>
+					<td class="key">autodrahaaaaaaaaaaaa</td>
+					<td><input id="jedloInput"></select></td>
+				</tr>
+				<tr>
+					<td colspan="2"><img src="bar.png" width="20" height="5" /><span>20%</span></td>
+				</tr>
+			</table>
+		</div>
 	</div>
   </body>
 </html>

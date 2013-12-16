@@ -15,7 +15,8 @@ var defaultSettings = {
 	languageKey: languages.keys[0],
 	vowelSwaps: 0,
 	consonantSwaps: 5,
-	multiLevelSwaps: false
+	multiLevelSwaps: false,
+	mode: "letters"
 };
 
 /*************** string extensions ***************/
@@ -105,6 +106,7 @@ function initSettings() {
 	localStorage.vowelSwaps = localStorage.vowelSwaps || defaultSettings.vowelSwaps;
 	localStorage.consonantSwaps = localStorage.consonantSwaps || defaultSettings.consonantSwaps;
 	localStorage.multiLevelSwaps = localStorage.multiLevelSwaps || defaultSettings.multiLevelSwaps;
+	localStorage.mode = localStorage.mode || defaultSettings.mode;
 	
 	// log settings
 	for (var setting in localStorage) {
@@ -145,6 +147,22 @@ function initSettingsUI() {
 			localStorage.multiLevelSwaps = $(this).is(":checked");
 			console.log(localStorage.multiLevelSwaps);
 		});
+		
+	// toggle tab
+	$("#" + localStorage.mode + "Tab").addClass('active').siblings().removeClass('active');
+	$("#" + localStorage.mode + "TabButton").addClass('active').siblings().removeClass('active');
+	
+	// hook tab toggle
+	$("#lettersTabButton").bind('click', function(e) {
+		$("#lettersTab").addClass('active').siblings().removeClass('active');
+		$(this).addClass('active').siblings().removeClass('active');
+		localStorage.mode = "letters";
+	});
+	$("#wordsTabButton").bind('click', function(e) {
+		$("#wordsTab").addClass('active').siblings().removeClass('active');
+		$(this).addClass('active').siblings().removeClass('active');
+		localStorage.mode = "words";
+	});
 }
 
 $(document).ready(function() {
