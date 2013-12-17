@@ -19,6 +19,8 @@ var defaultSettings = {
 	mode: "letters"
 };
 
+var content_response;
+
 /*************** string extensions ***************/
 
 // randomly shuffle string
@@ -61,12 +63,19 @@ function buildSwapMap(fromChars, toChars, maxSwaps, multiLevelSwaps) {
 // main randomize method
 function randomize(e) {
 	var language = languages.values[languages.keys.indexOf(localStorage.languageKey)];
-	var text = $("body").text();
-
+	
+	var text = "";
+	for (var prop in content_response.histogram) {
+		text += prop;
+	}
+	
 	// extract consonants and vowels from text, transform to lower case
 	var textConsonants = "";
 	var textVowels = "";
 	var textLen = text.length;
+	if (textLen < 1) {
+		return;
+	}
 	for (var i = 0; i < textLen; i++) {
 		var c = text[i].toLowerCase();
 		if (language.consonants.indexOf(c) != -1
@@ -88,79 +97,69 @@ function randomize(e) {
 
 	// send swap maps to randomizer content script
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-	  chrome.tabs.sendMessage(tabs[0].id, {consonantSwapMap: consonantSwapMap, vowelSwapMap: vowelSwapMap});
+		chrome.tabs.sendMessage(
+			tabs[0].id, 
+			{
+				action: "randomize", 
+				consonantSwapMap: consonantSwapMap, 
+				vowelSwapMap: vowelSwapMap
+			}
+		);
 	});
 }
 
-function buildWordHistogram() {
-	var ignore = { "STYLE":0, "SCRIPT":0, "NOSCRIPT":0, "IFRAME":0, "OBJECT":0 };
+function onGetHistogramResponse(response) {
+	console.log(response);
 	
-	var wordCount = 0;
-	var histogram = {};
+	if (!response) {
+		$("#content").html("<p>Can't extract text from the page.</p>");
+		return;
+	}
 	
-	$("*").each(function() { 
-		var jthis = $(this);
-        if (jthis.children().length == 0) {
-		
-			// ignore markup
-			if ((jthis.prop("tagName") in ignore)) {
-				return;
-			}
-			
-			var text = jthis.text();
-			var textWords = text.match(/\S+/g);
-			
-			if (!textWords) {
-				return;
-			}
-			
-			var textWordsLen = textWords.length;
-			
-			// valid word
-			if (textWordsLen > 0) {
-				wordCount += textWordsLen;
-				
-				// normalize
-				for (var i = 0; i < textWordsLen; i++) {
-					var word = textWords[i].toLowerCase();
-					
-					if (histogram.hasOwnProperty(word)) {
-						histogram[word]++;
-					} else {
-						histogram[word] = 0;
-					}
-				}
-			}
-		}
-	});
+	$("#defaultButton").bind('click', resetSettings);
+	$("#randButton").bind('click', randomize);
 	
+	content_response = response;
+
+	initSettings();
+	buildUI();
+	buildHistogramUI();
+}
+
+function buildHistogramUI() {
 	// get keys (words) and sort them by value (count) desc
 	var keys = [];
-	for(var prop in histogram) {
+	for(var prop in content_response.histogram) {
 		keys[keys.length] = prop;
 	}
 	keys.sort(function(a, b) {
-		return histogram[b] - histogram[a];
+		return content_response.histogram[b] - content_response.histogram[a];
 	});
 	
 	// populate histogram GUI
 	var keysLen = keys.length;
+	$("#histogram").html('');
 	for (var i = 0; i < keysLen; i++) {
-		var percent = Math.round(100 * histogram[keys[i]] / wordCount);
+		if (keys[i].length < 3) {
+			continue;
+		}
+		var percent = Math.round(100 * content_response.histogram[keys[i]] / content_response.wordCount);
 		$("#histogram")
 			.append('<tr>'
 			+ '<td class="key">' + keys[i] + '</td>'
 			+ '<td><input></input></td>'
 			+ '</tr><tr>'
-			+ '<td colspan="2"><img src="bar.png" width="' + percent + '" height="5" /><span>' + percent + '%</span></td>'
+			+ '<td colspan="2"><img src="bar.png" width="' + percent + '" height="5" /><span>' + content_response.histogram[keys[i]] + ' (' + percent + '%)</span></td>'
 			+ '</tr>');
 	}
 }
 
 function resetSettings(e) {
 	localStorage.clear();
+
 	initSettings();
-	initSettingsUI();
+	buildUI();
+	buildHistogramUI()
 }
 
 function initSettings() {
@@ -180,7 +179,7 @@ function initSettings() {
 }
 
 // set UI from settings, hook on change handlers
-function initSettingsUI() {
+function buildUI() {
 	$(languages.keys).each(function() {
 		var option = '<option value="' + this + '">' + this + '</option>';
 		$("#langSelect").append(option); 
@@ -231,12 +230,8 @@ function initSettingsUI() {
 }
 
 $(document).ready(function() {
-	$("#defaultButton").bind('click', resetSettings);
-	$("#randButton").bind('click', randomize);
-	
-	initSettings();
-	initSettingsUI();
-	
-	buildWordHistogram();
+	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		chrome.tabs.sendMessage(tabs[0].id, { action: "getHistogram" }, onGetHistogramResponse);
+	});
 });
 

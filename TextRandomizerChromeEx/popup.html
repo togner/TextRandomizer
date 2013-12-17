@@ -79,35 +79,37 @@
   </head>
   <body>
 	<div class="header">Randomizer</div>
-	<div id="randButton" class="button">Randomize</div>
-	<div id="defaultButton" class="button">Default Settings</div>
-	<div>
-		<div id="lettersTabButton" class="tabButton">Letters</div>
-		<div id="wordsTabButton" class="tabButton">Words</div>
-	</div>
-	<div>
-		<div id="lettersTab" class="tab">
-			<table border="0">
-				<tr>
-					<td>Language set:</td>
-					<td><select id="langSelect"></select></td>
-				</tr>
-				<tr>
-					<td>Consonant swaps:</td>
-					<td><input id="consonantSwapsInput" type="number" min="0" max="50" value="0" step="1" /></td>
-				</tr>
-				<tr>
-					<td>Vowel swaps:</td>
-					<td><input id="vowelSwapsInput" type="number" min="0" max="50" value="0" step="1" /></td>
-				</tr>
-				<tr>
-					<td colspan="2"><input id="multiLevelSwapsCheck" type="checkbox">Multi-level swaps</input></td>
-				</tr>
-			</table>
+	<div id="content">
+		<div id="randButton" class="button">Randomize</div>
+		<div id="defaultButton" class="button">Default Settings</div>
+		<div>
+			<div id="lettersTabButton" class="tabButton">Letters</div>
+			<div id="wordsTabButton" class="tabButton">Words</div>
 		</div>
-		<div id="wordsTab" class="tab">
-			<table border="0" id="histogram">
-			</table>
+		<div>
+			<div id="lettersTab" class="tab">
+				<table border="0">
+					<tr>
+						<td>Language set:</td>
+						<td><select id="langSelect"></select></td>
+					</tr>
+					<tr>
+						<td>Consonant swaps:</td>
+						<td><input id="consonantSwapsInput" type="number" min="0" max="50" value="0" step="1" /></td>
+					</tr>
+					<tr>
+						<td>Vowel swaps:</td>
+						<td><input id="vowelSwapsInput" type="number" min="0" max="50" value="0" step="1" /></td>
+					</tr>
+					<tr>
+						<td colspan="2"><input id="multiLevelSwapsCheck" type="checkbox">Multi-level swaps</input></td>
+					</tr>
+				</table>
+			</div>
+			<div id="wordsTab" class="tab">
+				<table border="0" id="histogram">
+				</table>
+			</div>
 		</div>
 	</div>
   </body>
