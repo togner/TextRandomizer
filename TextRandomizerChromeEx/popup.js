@@ -62,6 +62,14 @@ function buildSwapMap(fromChars, toChars, maxSwaps, multiLevelSwaps) {
 
 // main randomize method
 function randomize(e) {
+	if (localStorage.mode == "words") {
+		swapWords();
+	} else {
+		randomizeLetters();
+	}
+}
+
+function randomizeLetters() {
 	var language = languages.values[languages.keys.indexOf(localStorage.languageKey)];
 	
 	var text = "";
@@ -108,6 +116,33 @@ function randomize(e) {
 	});
 }
 
+function swapWords() {
+	var request = {};
+	request.action = "swapWords";
+	request.wordSwaps = {};
+	var len = 0;
+	$("#histogram tr").each(function() {
+		var key = $(this).find(".key").text();
+		var value = $(this).find(".swapValue").val();
+		if (value && key) {
+			request.wordSwaps[key] = value;
+			len++;
+		}
+	});
+	
+	if (len > 0) {
+		console.log(request);
+	
+		//send word swaps to content script
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(
+				tabs[0].id, 
+				request
+			);
+		});
+	}
+}
+
 function onGetHistogramResponse(response) {
 	console.log(response);
 	
@@ -129,7 +164,7 @@ function onGetHistogramResponse(response) {
 function buildHistogramUI() {
 	// get keys (words) and sort them by value (count) desc
 	var keys = [];
-	for(var prop in content_response.histogram) {
+	for (var prop in content_response.histogram) {
 		keys[keys.length] = prop;
 	}
 	keys.sort(function(a, b) {
@@ -148,7 +183,7 @@ function buildHistogramUI() {
 		$("#histogram")
 			.append('<tr>'
 			+ '<td class="key">' + keys[i] + '</td>'
-			+ '<td><input></input></td>'
+			+ '<td><input class="swapValue"></input></td>'
 			+ '</tr><tr>'
 			+ '<td colspan="2"><img src="bar.png" width="' + normalizedPercent + '" height="5" /><span>' + content_response.histogram[keys[i]] + ' (' + percent + '%)</span></td>'
 			+ '</tr><tr height="10px"></tr>');

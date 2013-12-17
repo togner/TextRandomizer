@@ -1,8 +1,14 @@
 function onRequest(request, sender, sendResponse) {
+	console.log(request);
+	var ignore = { "STYLE":0, "SCRIPT":0, "NOSCRIPT":0, "IFRAME":0, "OBJECT":0 };
+
 	if (request.action == "getHistogram") {
 		sendResponse(buildWordHistogram());
+	} else if (request.action == "swapWords") {
+		swapWords(request);
+
 	} else if (request.action == "randomize") {
-		var ignore = { "STYLE":0, "SCRIPT":0, "NOSCRIPT":0, "IFRAME":0, "OBJECT":0 };
+		
 		$("*").each(function() { 
 			var jthis = $(this);
 			if (jthis.children().length == 0) {
@@ -33,6 +39,30 @@ function onRequest(request, sender, sendResponse) {
 			} 
 		});
 	}
+}
+
+function swapWords(request) {
+	var ignore = { "STYLE":0, "SCRIPT":0, "NOSCRIPT":0, "IFRAME":0, "OBJECT":0 };
+
+	$("*").each(function() { 
+		var jthis = $(this);
+		if (jthis.children().length == 0) {
+			// ignore markup
+			if ((jthis.prop("tagName") in ignore)) {
+				return;
+			}
+			var text = jthis.text();
+			
+			if (text == "" ||  text.trim().length == 0) {
+				return;
+			}
+			for (var word in request.wordSwaps) {
+				var re = new RegExp("\\b" + word + "\\b", "gi");
+				text = text.replace(re, request.wordSwaps[word]);
+			}
+			jthis.text(text);
+		}
+	});
 }
 
 function buildWordHistogram() {
