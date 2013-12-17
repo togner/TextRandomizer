@@ -2,13 +2,12 @@ function onRequest(request, sender, sendResponse) {
 	console.log(request);
 	var ignore = { "STYLE":0, "SCRIPT":0, "NOSCRIPT":0, "IFRAME":0, "OBJECT":0 };
 
+	// todo: clean the code - letterTraversal(transform fn), wordTraversal(transform fn)
 	if (request.action == "getHistogram") {
 		sendResponse(buildWordHistogram());
 	} else if (request.action == "swapWords") {
 		swapWords(request);
-
 	} else if (request.action == "randomize") {
-		
 		$("*").each(function() { 
 			var jthis = $(this);
 			if (jthis.children().length == 0) {
