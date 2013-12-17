@@ -144,13 +144,14 @@ function buildHistogramUI() {
 			continue;
 		}
 		var percent = Math.round(100 * content_response.histogram[keys[i]] / content_response.wordCount);
+		var normalizedPercent = Math.round(220 * content_response.histogram[keys[i]] / content_response.histogram[keys[0]]);
 		$("#histogram")
 			.append('<tr>'
 			+ '<td class="key">' + keys[i] + '</td>'
 			+ '<td><input></input></td>'
 			+ '</tr><tr>'
-			+ '<td colspan="2"><img src="bar.png" width="' + percent + '" height="5" /><span>' + content_response.histogram[keys[i]] + ' (' + percent + '%)</span></td>'
-			+ '</tr>');
+			+ '<td colspan="2"><img src="bar.png" width="' + normalizedPercent + '" height="5" /><span>' + content_response.histogram[keys[i]] + ' (' + percent + '%)</span></td>'
+			+ '</tr><tr height="10px"></tr>');
 	}
 }
 

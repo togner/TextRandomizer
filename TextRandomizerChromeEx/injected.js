@@ -69,7 +69,7 @@ function buildWordHistogram() {
 					if (histogram.hasOwnProperty(word)) {
 						histogram[word]++;
 					} else {
-						histogram[word] = 0;
+						histogram[word] = 1;
 					}
 				}
 			}
