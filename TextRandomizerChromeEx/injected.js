@@ -40,6 +40,49 @@ function onRequest(request, sender, sendResponse) {
 	}
 }
 
+String.prototype.capitalize = function()
+{
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
+function swap(text, wordSwaps) {
+	var re = RegExp("\\w+", "g")
+	var match;
+	var result = "";
+	var start = 0;
+	while ((match = re.exec(text)) !== null) {
+		result += text.substring(start, match.index);
+		start = re.lastIndex;
+		var matchKey = match[0].toLowerCase();
+		if (!(matchKey in wordSwaps)) {
+			// no swapping - just copy the text
+			result += text.substring(match.index, re.lastIndex);
+		} else {
+			// swap word
+			var swap = wordSwaps[matchKey];
+
+			// if the swap has casing applied use it verbatim
+			if (swap.toLowerCase() != swap) {
+				result += swap;
+			} else {
+				// convert swap's casing to match's casing
+				if (matchKey.toUpperCase() == match) {
+					// upper-case
+					result += swap.toUpperCase();
+				} else if (matchKey.capitalize() == match) {
+					// capital-case
+					 result += swap.capitalize();
+				} else {
+					// lower-case or anything else
+					result += swap; 
+				}
+			}
+		}
+	}
+	result += text.substring(start, text.length);
+	return result;
+}
+
 function swapWords(request) {
 	var ignore = { "STYLE":0, "SCRIPT":0, "NOSCRIPT":0, "IFRAME":0, "OBJECT":0 };
 
@@ -55,10 +98,9 @@ function swapWords(request) {
 			if (text == "" ||  text.trim().length == 0) {
 				return;
 			}
-			for (var word in request.wordSwaps) {
-				var re = new RegExp("\\b" + word + "\\b", "gi");
-				text = text.replace(re, request.wordSwaps[word]);
-			}
+			
+			text = swap(text, request.wordSwaps);
+			
 			jthis.text(text);
 		}
 	});
